@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_background"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADD ACCOUNT"
+        android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+        android:textColor="@color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Red dot separator -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Account Name -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_account_name"
+        style="@style/Widget.DotLedger.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Account Name"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="textCapWords"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Account Type -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_account_type"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Account Type"
+        app:boxCornerRadiusBottomEnd="0dp"
+        app:boxCornerRadiusBottomStart="0dp"
+        app:boxCornerRadiusTopEnd="0dp"
+        app:boxCornerRadiusTopStart="0dp"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidth="2dp"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+        <AutoCompleteTextView
+            android:id="@+id/et_account_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="none"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Initial Balance -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_initial_balance"
+        style="@style/Widget.DotLedger.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Initial Balance"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
+        app:prefixText="₹">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_initial_balance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="numberDecimal"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.DotLedger.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="CANCEL" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/Widget.DotLedger.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="SAVE" />
+    </LinearLayout>
+
+    <!-- Delete Button (only shown when editing) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_delete"
+        style="@style/Widget.DotLedger.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/red_accent"
+        android:text="DELETE ACCOUNT"
+        android:visibility="gone" />
+
+</LinearLayout>

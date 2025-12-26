@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Close"
+            app:tint="@color/white" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <!-- Type Switcher -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_type_switcher"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp">
+
+            <TextView
+                android:id="@+id/chip_expense"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:gravity="center"
+                android:text="Expense"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/dot_matrix"
+                android:background="@drawable/bg_type_selected"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/chip_income"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:gravity="center"
+                android:text="Income"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp"
+                android:fontFamily="@font/dot_matrix"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/chip_transfer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="16dp"
+                android:gravity="center"
+                android:text="Transfer"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="14sp"
+                android:fontFamily="@font/dot_matrix"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_save"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_check"
+            android:contentDescription="Save"
+            app:tint="@color/expense_red" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Amount Display -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="₹"
+                android:textColor="@color/dark_text_secondary"
+                android:textSize="32sp"
+                android:fontFamily="@font/dot_matrix" />
+
+            <TextView
+                android:id="@+id/tv_amount_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/white"
+                android:textSize="56sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/dot_matrix"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <!-- Note Input -->
+            <EditText
+                android:id="@+id/et_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="What did you buy?"
+                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:fontFamily="@font/dot_matrix"
+                android:padding="16dp"
+                android:inputType="textCapSentences"
+                android:maxLines="1" />
+
+            <!-- Quick Details Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <!-- Date -->
+                <LinearLayout
+                    android:id="@+id/btn_date"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📅"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Today"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+
+                <!-- Account -->
+                <LinearLayout
+                    android:id="@+id/btn_account"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💳"
+                        android:textSize="20sp"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_account"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Select Account"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/dot_matrix"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Category / To Account -->
+            <LinearLayout
+                android:id="@+id/btn_category"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_input_field"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="12dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📁"
+                    android:textSize="20sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_category"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Select Category"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/dot_matrix" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Calculator Numpad -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#0A0A0A">
+
+        <!-- Row 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_1"
+                style="@style/CalcButton"
+                android:text="1" />
+
+            <TextView
+                android:id="@+id/btn_num_2"
+                style="@style/CalcButton"
+                android:text="2" />
+
+            <TextView
+                android:id="@+id/btn_num_3"
+                style="@style/CalcButton"
+                android:text="3" />
+        </LinearLayout>
+
+        <!-- Row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_4"
+                style="@style/CalcButton"
+                android:text="4" />
+
+            <TextView
+                android:id="@+id/btn_num_5"
+                style="@style/CalcButton"
+                android:text="5" />
+
+            <TextView
+                android:id="@+id/btn_num_6"
+                style="@style/CalcButton"
+                android:text="6" />
+        </LinearLayout>
+
+        <!-- Row 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_7"
+                style="@style/CalcButton"
+                android:text="7" />
+
+            <TextView
+                android:id="@+id/btn_num_8"
+                style="@style/CalcButton"
+                android:text="8" />
+
+            <TextView
+                android:id="@+id/btn_num_9"
+                style="@style/CalcButton"
+                android:text="9" />
+        </LinearLayout>
+
+        <!-- Row 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_dot"
+                style="@style/CalcButton"
+                android:text="." />
+
+            <TextView
+                android:id="@+id/btn_num_0"
+                style="@style/CalcButton"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/btn_backspace"
+                style="@style/CalcButton"
+                android:text="⌫" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

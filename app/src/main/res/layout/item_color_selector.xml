@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <!-- Color Circle -->
+    <View
+        android:id="@+id/view_color"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@drawable/red_dot" />
+
+    <!-- Selection Border -->
+    <View
+        android:id="@+id/view_selection_border"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:background="@drawable/color_selector_border"
+        android:visibility="invisible" />
+
+</FrameLayout>

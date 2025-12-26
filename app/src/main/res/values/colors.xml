@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme Colors -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="red_accent">#FF0000</color>
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_medium">#AAAAAA</color>
+    <color name="gray_dark">#333333</color>
+
+    <!-- Modern Dark Theme -->
+    <color name="dark_background">#000000</color>
+    <color name="dark_surface">#1C1C1E</color>
+    <color name="dark_surface_elevated">#2C2C2E</color>
+    <color name="dark_border">#FFFFFF</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#8E8E93</color>
+
+    <!-- Gradients -->
+    <color name="gradient_red_start">#FF3B30</color>
+    <color name="gradient_red_end">#FF6B6B</color>
+    <color name="gradient_green_start">#34C759</color>
+    <color name="gradient_green_end">#30D158</color>
+    <color name="gradient_blue_start">#007AFF</color>
+    <color name="gradient_blue_end">#5AC8FA</color>
+    <color name="gradient_purple_start">#AF52DE</color>
+    <color name="gradient_purple_end">#BF5AF2</color>
+
+    <color name="chip_background">#FFFFFF</color>
+    <color name="chip_background_dark">#1A1A1A</color>
+
+    <!-- Income/Expense colors -->
+    <color name="income_green">#34C759</color>
+    <color name="expense_red">#FF3B30</color>
+
+    <!-- Add these color state lists -->
+    <color name="chip_text_color">#FFFFFF</color>
+</resources>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_background">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
+
+            <!-- Header with Title -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TRANSACTIONS"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/dot_matrix" />
+            </LinearLayout>
+
+            <!-- Month Selector Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#1C1C1E"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageButton
+                        android:id="@+id/btn_prev_month"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_month_selector"
+                        android:src="@drawable/ic_chevron_left"
+                        android:contentDescription="Previous Month"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_month_year"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="December 2025"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/dot_matrix" />
+
+                    <ImageButton
+                        android:id="@+id/btn_next_month"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_month_selector"
+                        android:src="@drawable/ic_chevron_right"
+                        android:contentDescription="Next Month"
+                        app:tint="@color/white" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Monthly Summary Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/gradient_balance_card"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
+
+                    <!-- Inflow -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="↑ INFLOW"
+                            android:textColor="@color/dark_text_secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/dot_matrix" />
+
+                        <TextView
+                            android:id="@+id/tv_monthly_income"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="₹0"
+                            android:textColor="@color/income_green"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/dot_matrix" />
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#3C3C3E"
+                        android:layout_marginHorizontal="12dp" />
+
+                    <!-- Outflow -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="↓ OUTFLOW"
+                            android:textColor="@color/dark_text_secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/dot_matrix" />
+
+                        <TextView
+                            android:id="@+id/tv_monthly_expense"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="₹0"
+                            android:textColor="@color/expense_red"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/dot_matrix" />
+                    </LinearLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#3C3C3E"
+                        android:layout_marginHorizontal="12dp" />
+
+                    <!-- Net -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NET"
+                            android:textColor="@color/dark_text_secondary"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/dot_matrix" />
+
+                        <TextView
+                            android:id="@+id/tv_monthly_net"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="₹0"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/dot_matrix" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Filter Chips -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:paddingHorizontal="20dp"
+                android:layout_marginBottom="16dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chip_group_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true"
+                    app:chipSpacing="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_all"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:checked="true"
+                        android:text="All"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/dot_matrix"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_selector"
+                        app:chipStrokeWidth="2dp"
+                        app:chipCornerRadius="20dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_income"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Income"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/dot_matrix"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_selector"
+                        app:chipStrokeWidth="2dp"
+                        app:chipCornerRadius="20dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_expense"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Expense"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/dot_matrix"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_selector"
+                        app:chipStrokeWidth="2dp"
+                        app:chipCornerRadius="20dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_transfer"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Transfer"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/dot_matrix"
+                        app:chipBackgroundColor="@color/chip_background_selector"
+                        app:chipStrokeColor="@color/chip_stroke_selector"
+                        app:chipStrokeWidth="2dp"
+                        app:chipCornerRadius="20dp" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+
+            <!-- Transactions List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingHorizontal="20dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/expense_red"
+        app:tint="@color/white"
+        app:shapeAppearance="@style/ShapeAppearance.DotLedger.FAB"
+        app:elevation="6dp"
+        app:borderWidth="0dp" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
