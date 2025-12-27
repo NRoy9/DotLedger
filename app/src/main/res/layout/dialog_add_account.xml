@@ -2,115 +2,453 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/dark_background"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tv_dialog_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ADD ACCOUNT"
-        android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
-        android:textColor="@color/white"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Red dot separator -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/white"
-        android:layout_marginBottom="24dp" />
-
-    <!-- Account Name -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_account_name"
-        style="@style/Widget.DotLedger.TextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Account Name"
-        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_account_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dot_matrix"
-            android:inputType="textCapWords"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Account Type -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_account_type"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Account Type"
-        app:boxCornerRadiusBottomEnd="0dp"
-        app:boxCornerRadiusBottomStart="0dp"
-        app:boxCornerRadiusTopEnd="0dp"
-        app:boxCornerRadiusTopStart="0dp"
-        app:boxStrokeColor="@color/black"
-        app:boxStrokeWidth="2dp"
-        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
-
-        <AutoCompleteTextView
-            android:id="@+id/et_account_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dot_matrix"
-            android:inputType="none"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Initial Balance -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_initial_balance"
-        style="@style/Widget.DotLedger.TextInputLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:hint="Initial Balance"
-        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
-        app:prefixText="₹">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_initial_balance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/dot_matrix"
-            android:inputType="numberDecimal"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Buttons -->
+    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:gravity="center_vertical">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cancel"
-            style="@style/Widget.DotLedger.Button.Outlined"
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Close"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="CANCEL" />
+            android:layout_marginStart="12dp"
+            android:text="ADD ACCOUNT"
+            android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+            android:textColor="@color/white" />
 
-        <com.google.android.material.button.MaterialButton
+        <ImageButton
             android:id="@+id/btn_save"
-            style="@style/Widget.DotLedger.Button"
-            android:layout_width="0dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_check"
+            android:contentDescription="Save"
+            app:tint="@color/expense_red" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="SAVE" />
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Account Icon Preview -->
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp">
+
+                <View
+                    android:id="@+id/view_account_icon_bg"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/red_dot" />
+
+                <TextView
+                    android:id="@+id/tv_account_icon_preview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="🏦"
+                    android:textSize="40sp" />
+            </FrameLayout>
+
+            <!-- Account Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACCOUNT NAME"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/et_account_name"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="e.g., HDFC Savings"
+                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:fontFamily="@font/dot_matrix"
+                android:paddingHorizontal="16dp"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
+
+            <!-- Account Type Selector -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACCOUNT TYPE"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <LinearLayout
+                    android:id="@+id/btn_type_bank"
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🏦"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="BANK"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_type_credit_card"
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💳"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="CARD"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_type_wallet"
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="👛"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="WALLET"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:id="@+id/btn_type_cash"
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💵"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="CASH"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/btn_type_other"
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📊"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="OTHER"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+
+                <!-- Empty space to balance layout -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="72dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <!-- Initial Balance -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INITIAL BALANCE"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+
+                <!-- Balance Display -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="₹"
+                        android:textColor="@color/dark_text_secondary"
+                        android:textSize="28sp"
+                        android:fontFamily="@font/dot_matrix" />
+
+                    <TextView
+                        android:id="@+id/tv_balance_display"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="@color/white"
+                        android:textSize="42sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/dot_matrix"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Note (Optional) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NOTE (OPTIONAL)"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/et_note"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="Add a note..."
+                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/dot_matrix"
+                android:paddingHorizontal="16dp"
+                android:inputType="textCapSentences"
+                android:maxLines="1" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Calculator Numpad -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#0A0A0A">
+
+        <!-- Row 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_1"
+                style="@style/CalcButton"
+                android:text="1" />
+
+            <TextView
+                android:id="@+id/btn_num_2"
+                style="@style/CalcButton"
+                android:text="2" />
+
+            <TextView
+                android:id="@+id/btn_num_3"
+                style="@style/CalcButton"
+                android:text="3" />
+        </LinearLayout>
+
+        <!-- Row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_4"
+                style="@style/CalcButton"
+                android:text="4" />
+
+            <TextView
+                android:id="@+id/btn_num_5"
+                style="@style/CalcButton"
+                android:text="5" />
+
+            <TextView
+                android:id="@+id/btn_num_6"
+                style="@style/CalcButton"
+                android:text="6" />
+        </LinearLayout>
+
+        <!-- Row 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_num_7"
+                style="@style/CalcButton"
+                android:text="7" />
+
+            <TextView
+                android:id="@+id/btn_num_8"
+                style="@style/CalcButton"
+                android:text="8" />
+
+            <TextView
+                android:id="@+id/btn_num_9"
+                style="@style/CalcButton"
+                android:text="9" />
+        </LinearLayout>
+
+        <!-- Row 4 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btn_dot"
+                style="@style/CalcButton"
+                android:text="." />
+
+            <TextView
+                android:id="@+id/btn_num_0"
+                style="@style/CalcButton"
+                android:text="0" />
+
+            <TextView
+                android:id="@+id/btn_backspace"
+                style="@style/CalcButton"
+                android:text="⌫" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Delete Button (only shown when editing) -->
@@ -119,7 +457,7 @@
         style="@style/Widget.DotLedger.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="20dp"
         android:backgroundTint="@color/red_accent"
         android:text="DELETE ACCOUNT"
         android:visibility="gone" />

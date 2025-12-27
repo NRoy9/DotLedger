@@ -4,14 +4,23 @@ import androidx.lifecycle.LiveData
 import com.nitin.dotledger.data.dao.AccountDao
 import com.nitin.dotledger.data.dao.CategoryDao
 import com.nitin.dotledger.data.dao.CategoryTotal
+import com.nitin.dotledger.data.dao.SettingsDao
 import com.nitin.dotledger.data.dao.TransactionDao
 import com.nitin.dotledger.data.entities.*
 
 class DotLedgerRepository(
     private val accountDao: AccountDao,
     private val categoryDao: CategoryDao,
-    private val transactionDao: TransactionDao
+    private val transactionDao: TransactionDao,
+    private val settingsDao: SettingsDao
 ) {
+    // Settings operations
+    val appSettings: LiveData<AppSettings?> = settingsDao.getSettings()
+
+    suspend fun saveSettings(settings: AppSettings) = settingsDao.saveSettings(settings)
+
+    suspend fun getSettingsSync(): AppSettings? = settingsDao.getSettingsSync()
+
     // Account operations
     val allAccounts: LiveData<List<Account>> = accountDao.getAllAccounts()
     val totalBalance: LiveData<Double?> = accountDao.getTotalBalance()

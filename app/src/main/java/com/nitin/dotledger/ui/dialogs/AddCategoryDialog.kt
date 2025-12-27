@@ -1,5 +1,7 @@
 package com.nitin.dotledger.ui.dialogs
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,7 +30,8 @@ class AddCategoryDialog : DialogFragment() {
         "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0",
         "#9966FF", "#FF9F40", "#FF6B6B", "#4ECDC4",
         "#45B7D1", "#FFA07A", "#98D8C8", "#F7DC6F",
-        "#BB8FCE", "#85C1E2", "#F8B739", "#52B788"
+        "#BB8FCE", "#85C1E2", "#F8B739", "#52B788",
+        "#E63946", "#F77F00", "#06FFA5", "#2A9D8F"
     )
 
     companion object {
@@ -45,6 +48,11 @@ class AddCategoryDialog : DialogFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +65,10 @@ class AddCategoryDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         setupColorSelector()
+        setupTypeSelection()
         loadCategoryIfEditing()
         setupClickListeners()
     }
@@ -66,7 +77,7 @@ class AddCategoryDialog : DialogFragment() {
         super.onStart()
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.MATCH_PARENT
         )
     }
 
@@ -81,12 +92,15 @@ class AddCategoryDialog : DialogFragment() {
         }
     }
 
+    private fun setupTypeSelection() {
+        updateTypeUI(CategoryType.EXPENSE)
+    }
+
     private fun loadCategoryIfEditing() {
         val categoryId = arguments?.getLong(ARG_CATEGORY_ID)
 
         if (categoryId != null && categoryId > 0) {
             binding.tvDialogTitle.text = "EDIT CATEGORY"
-            binding.btnSave.text = "UPDATE"
 
             viewModel.allCategories.observe(viewLifecycleOwner) { categories ->
                 val category = categories.find { it.id == categoryId }
@@ -97,12 +111,7 @@ class AddCategoryDialog : DialogFragment() {
                     selectedType = it.type
                     selectedColor = it.colorCode
 
-                    when (it.type) {
-                        CategoryType.EXPENSE -> binding.chipExpenseCategory.isChecked = true
-                        CategoryType.INCOME -> binding.chipIncomeCategory.isChecked = true
-                    }
-
-                    // Update color selector
+                    updateTypeUI(it.type)
                     setupColorSelector()
 
                     // Show delete button only if not a default category
@@ -115,15 +124,7 @@ class AddCategoryDialog : DialogFragment() {
     }
 
     private fun setupClickListeners() {
-        binding.chipGroupCategoryType.setOnCheckedStateChangeListener { _, checkedIds ->
-            selectedType = when (checkedIds.firstOrNull()) {
-                R.id.chip_income_category -> CategoryType.INCOME
-                R.id.chip_expense_category -> CategoryType.EXPENSE
-                else -> CategoryType.EXPENSE
-            }
-        }
-
-        binding.btnCancel.setOnClickListener {
+        binding.btnClose.setOnClickListener {
             dismiss()
         }
 
@@ -134,6 +135,26 @@ class AddCategoryDialog : DialogFragment() {
         binding.btnDelete.setOnClickListener {
             deleteCategory()
         }
+
+        binding.btnTypeExpense.setOnClickListener {
+            selectedType = CategoryType.EXPENSE
+            updateTypeUI(CategoryType.EXPENSE)
+        }
+
+        binding.btnTypeIncome.setOnClickListener {
+            selectedType = CategoryType.INCOME
+            updateTypeUI(CategoryType.INCOME)
+        }
+    }
+
+    private fun updateTypeUI(type: CategoryType) {
+        if (type == CategoryType.EXPENSE) {
+            binding.btnTypeExpense.setBackgroundResource(R.drawable.bg_type_selected)
+            binding.btnTypeIncome.setBackgroundResource(R.drawable.bg_input_field)
+        } else {
+            binding.btnTypeExpense.setBackgroundResource(R.drawable.bg_input_field)
+            binding.btnTypeIncome.setBackgroundResource(R.drawable.bg_type_selected)
+        }
     }
 
     private fun saveCategory() {
@@ -141,7 +162,7 @@ class AddCategoryDialog : DialogFragment() {
 
         // Validation
         if (name.isEmpty()) {
-            binding.tilCategoryName.error = "Category name is required"
+            Toast.makeText(requireContext(), "Please enter category name", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -180,9 +201,16 @@ class AddCategoryDialog : DialogFragment() {
                 return
             }
 
-            viewModel.deleteCategory(it)
-            Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
-            dismiss()
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Delete Category")
+                .setMessage("Are you sure you want to delete ${it.name}?")
+                .setPositiveButton("Delete") { _, _ ->
+                    viewModel.deleteCategory(it)
+                    Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
+                    dismiss()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 

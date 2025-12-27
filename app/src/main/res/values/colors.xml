@@ -12,7 +12,7 @@
     <color name="dark_background">#000000</color>
     <color name="dark_surface">#1C1C1E</color>
     <color name="dark_surface_elevated">#2C2C2E</color>
-    <color name="dark_border">#FFFFFF</color>
+    <color name="dark_border">#3C3C3E</color>
     <color name="dark_text_primary">#FFFFFF</color>
     <color name="dark_text_secondary">#8E8E93</color>
 
@@ -26,8 +26,8 @@
     <color name="gradient_purple_start">#AF52DE</color>
     <color name="gradient_purple_end">#BF5AF2</color>
 
-    <color name="chip_background">#FFFFFF</color>
-    <color name="chip_background_dark">#1A1A1A</color>
+    <color name="chip_background">#1C1C1E</color>
+    <color name="chip_background_dark">#1C1C1E</color>
 
     <!-- Income/Expense colors -->
     <color name="income_green">#34C759</color>

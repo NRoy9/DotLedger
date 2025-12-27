@@ -14,11 +14,12 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
 import com.nitin.dotledger.data.entities.TransactionType
 import com.nitin.dotledger.databinding.FragmentStatisticsBinding
 import com.nitin.dotledger.ui.adapters.ChartLegendAdapter
 import com.nitin.dotledger.ui.adapters.LegendItem
+import com.nitin.dotledger.ui.adapters.TopSpendingAdapter
+import com.nitin.dotledger.ui.adapters.TopSpendingItem
 import com.nitin.dotledger.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -65,19 +66,26 @@ class StatisticsFragment : Fragment() {
             dragDecelerationFrictionCoef = 0.95f
 
             isDrawHoleEnabled = true
-            setHoleColor(Color.WHITE)
-            holeRadius = 58f
-            transparentCircleRadius = 61f
+            setHoleColor(Color.parseColor("#1C1C1E"))
+            holeRadius = 65f
+            transparentCircleRadius = 70f
 
-            setDrawCenterText(false)
+            setDrawCenterText(true)
+            centerTextRadiusPercent = 80f
+            setCenterTextColor(Color.WHITE)
+            setCenterTextSize(18f)
 
             rotationAngle = 0f
-            isRotationEnabled = false
-            isHighlightPerTapEnabled = false
+            isRotationEnabled = true
+            isHighlightPerTapEnabled = true
 
             legend.isEnabled = false
 
-            animateY(1000, Easing.EaseInOutQuad)
+            setEntryLabelColor(Color.WHITE)
+            setEntryLabelTextSize(11f)
+            setDrawEntryLabels(false)
+
+            animateY(1200, Easing.EaseInOutQuad)
         }
     }
 
@@ -127,15 +135,30 @@ class StatisticsFragment : Fragment() {
             // Calculate totals
             val totalExpense = expenseTotals.sumOf { it.total }
             val totalIncome = incomeTotals.sumOf { it.total }
+            val netFlow = totalIncome - totalExpense
+
+            // Get transaction count
+            val transactions = viewModel.getTransactionsByDateRange(startDate, endDate).value ?: emptyList()
+            val transactionCount = transactions.size
 
             // Update summary
             binding.tvTotalIncome.text = currencyFormat.format(totalIncome)
             binding.tvTotalExpense.text = currencyFormat.format(totalExpense)
+            binding.tvNetFlow.text = currencyFormat.format(netFlow)
+            binding.tvTransactionCount.text = transactionCount.toString()
+
+            // Set net flow color
+            binding.tvNetFlow.setTextColor(when {
+                netFlow > 0 -> Color.parseColor("#34C759")
+                netFlow < 0 -> Color.parseColor("#FF3B30")
+                else -> Color.WHITE
+            })
 
             // Update expense chart
             updateChart(
                 binding.chartExpense,
                 binding.rvExpenseLegend,
+                binding.emptyStateExpense,
                 expenseTotals,
                 totalExpense,
                 TransactionType.EXPENSE
@@ -145,27 +168,35 @@ class StatisticsFragment : Fragment() {
             updateChart(
                 binding.chartIncome,
                 binding.rvIncomeLegend,
+                binding.emptyStateIncome,
                 incomeTotals,
                 totalIncome,
                 TransactionType.INCOME
             )
+
+            // Update top spending
+            updateTopSpending(expenseTotals, totalExpense)
         }
     }
 
     private suspend fun updateChart(
         chart: PieChart,
         legendRecyclerView: androidx.recyclerview.widget.RecyclerView,
+        emptyStateView: View,
         categoryTotals: List<com.nitin.dotledger.data.dao.CategoryTotal>,
         total: Double,
         type: TransactionType
     ) {
         if (categoryTotals.isEmpty() || total == 0.0) {
-            chart.clear()
-            chart.setNoDataText("No data for this month")
-            chart.invalidate()
-            legendRecyclerView.adapter = ChartLegendAdapter(emptyList())
+            chart.visibility = View.GONE
+            legendRecyclerView.visibility = View.GONE
+            emptyStateView.visibility = View.VISIBLE
             return
         }
+
+        chart.visibility = View.VISIBLE
+        legendRecyclerView.visibility = View.VISIBLE
+        emptyStateView.visibility = View.GONE
 
         val entries = mutableListOf<PieEntry>()
         val colors = mutableListOf<Int>()
@@ -206,15 +237,24 @@ class StatisticsFragment : Fragment() {
 
         val dataSet = PieDataSet(entries, "").apply {
             setColors(colors)
-            sliceSpace = 3f
-            selectionShift = 5f
-            valueTextColor = Color.BLACK
+            sliceSpace = 2f
+            selectionShift = 8f
+            valueTextColor = Color.WHITE
             valueTextSize = 12f
             setDrawValues(false)
         }
 
         val data = PieData(dataSet)
         chart.data = data
+
+        // Set center text
+        val centerText = when (type) {
+            TransactionType.EXPENSE -> "Total\nExpense"
+            TransactionType.INCOME -> "Total\nIncome"
+            else -> ""
+        }
+        chart.centerText = centerText
+
         chart.highlightValues(null)
         chart.invalidate()
 
@@ -222,6 +262,41 @@ class StatisticsFragment : Fragment() {
         legendRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = ChartLegendAdapter(legendItems)
+        }
+    }
+
+    private fun updateTopSpending(
+        expenseTotals: List<com.nitin.dotledger.data.dao.CategoryTotal>,
+        totalExpense: Double
+    ) {
+        if (expenseTotals.isEmpty() || totalExpense == 0.0) {
+            binding.rvTopSpending.visibility = View.GONE
+            return
+        }
+
+        binding.rvTopSpending.visibility = View.VISIBLE
+
+        val allCategories = viewModel.allCategories.value ?: emptyList()
+
+        val topItems = expenseTotals
+            .sortedByDescending { it.total }
+            .take(5)
+            .map { categoryTotal ->
+                val category = categoryTotal.categoryId?.let { catId ->
+                    allCategories.find { it.id == catId }
+                }
+
+                TopSpendingItem(
+                    categoryName = category?.name ?: "Unknown",
+                    amount = categoryTotal.total,
+                    percentage = ((categoryTotal.total / totalExpense) * 100).toFloat(),
+                    color = category?.colorCode ?: "#FF0000"
+                )
+            }
+
+        binding.rvTopSpending.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = TopSpendingAdapter(topItems)
         }
     }
 

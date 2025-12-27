@@ -3,27 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
+    android:paddingVertical="12dp"
     android:gravity="center_vertical">
 
-    <!-- Color Dot -->
+    <!-- Color Indicator -->
     <View
         android:id="@+id/view_legend_color"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_marginEnd="12dp"
         android:background="@drawable/red_dot" />
 
-    <!-- Category Name -->
-    <TextView
-        android:id="@+id/tv_legend_name"
+    <!-- Category Info -->
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Food &amp; Dining"
-        android:textAppearance="@style/TextAppearance.DotLedger.Body1"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_legend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Food &amp; Dining"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/dot_matrix" />
+
+        <TextView
+            android:id="@+id/tv_legend_percentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="50.0%"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="12sp"
+            android:fontFamily="@font/dot_matrix" />
+    </LinearLayout>
 
     <!-- Amount -->
     <TextView
@@ -31,19 +48,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="₹5,000"
-        android:textAppearance="@style/TextAppearance.DotLedger.Body1"
         android:textColor="@color/white"
-        android:textSize="14sp"
-        android:layout_marginEnd="8dp" />
-
-    <!-- Percentage -->
-    <TextView
-        android:id="@+id/tv_legend_percentage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="50%"
-        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
-        android:textColor="@color/dark_text_secondary"
-        android:textSize="12sp" />
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/dot_matrix" />
 
 </LinearLayout>

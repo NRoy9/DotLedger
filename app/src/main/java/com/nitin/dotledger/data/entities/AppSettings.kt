@@ -11,7 +11,8 @@ data class AppSettings(
     val currencySymbol: String = "₹",
     val numberFormat: NumberFormat = NumberFormat.INDIAN,
     val defaultTransactionType: TransactionType = TransactionType.EXPENSE,
-    val isDarkTheme: Boolean = true
+    val isDarkTheme: Boolean = true,
+    val enableSmsReading: Boolean = false
 )
 
 enum class NumberFormat {

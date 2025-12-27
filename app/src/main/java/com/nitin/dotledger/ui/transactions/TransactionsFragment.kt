@@ -132,6 +132,15 @@ class TransactionsFragment : Fragment() {
             transactions
         }
 
+        // Show/hide empty state
+        if (filteredTransactions.isEmpty()) {
+            binding.rvTransactions.visibility = View.GONE
+            binding.emptyStateTransactions.visibility = View.VISIBLE
+        } else {
+            binding.rvTransactions.visibility = View.VISIBLE
+            binding.emptyStateTransactions.visibility = View.GONE
+        }
+
         // Map to TransactionWithDetails
         val transactionsWithDetails = filteredTransactions.mapNotNull { transaction ->
             val account = accounts.find { it.id == transaction.accountId }

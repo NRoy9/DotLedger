@@ -17,19 +17,31 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val allCategories: LiveData<List<Category>>
     val allTransactions: LiveData<List<Transaction>>
     val totalBalance: LiveData<Double?>
+    val appSettings: LiveData<AppSettings?>
 
     init {
         val database = AppDatabase.getDatabase(application)
         repository = DotLedgerRepository(
             database.accountDao(),
             database.categoryDao(),
-            database.transactionDao()
+            database.transactionDao(),
+            database.settingsDao()
         )
 
         allAccounts = repository.allAccounts
         allCategories = repository.allCategories
         allTransactions = repository.allTransactions
         totalBalance = repository.totalBalance
+        appSettings = repository.appSettings
+    }
+
+    // Settings operations
+    fun updateSettings(settings: AppSettings) = viewModelScope.launch {
+        repository.saveSettings(settings)
+    }
+
+    suspend fun getSettingsSync(): AppSettings? {
+        return repository.getSettingsSync()
     }
 
     // Account operations

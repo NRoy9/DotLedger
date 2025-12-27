@@ -75,14 +75,37 @@ class AddTransactionDialog : DialogFragment() {
 
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        // Load default transaction type from settings
         val typeString = arguments?.getString(ARG_TYPE)
-        currentType = typeString?.let { TransactionType.valueOf(it) } ?: TransactionType.EXPENSE
+        val transactionId = arguments?.getLong(ARG_TRANSACTION_ID, -1L) ?: -1L
 
-        setupInitialType()
-        setupObservers()
-        setupClickListeners()
-        updateDateDisplay()
-        loadTransactionIfEditing()
+        if (typeString != null) {
+            // Explicit type provided
+            currentType = TransactionType.valueOf(typeString)
+            setupInitialType()
+            setupObservers()
+            setupClickListeners()
+            updateDateDisplay()
+            loadTransactionIfEditing()
+        } else if (transactionId > 0) {
+            // Editing existing transaction
+            setupInitialType()
+            setupObservers()
+            setupClickListeners()
+            updateDateDisplay()
+            loadTransactionIfEditing()
+        } else {
+            // New transaction - use settings default
+            viewModel.appSettings.observe(viewLifecycleOwner) { settings ->
+                if (settings != null) {
+                    currentType = settings.defaultTransactionType
+                    setupInitialType()
+                }
+            }
+            setupObservers()
+            setupClickListeners()
+            updateDateDisplay()
+        }
     }
 
     override fun onStart() {

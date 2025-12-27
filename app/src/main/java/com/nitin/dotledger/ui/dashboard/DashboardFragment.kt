@@ -118,6 +118,15 @@ class DashboardFragment : Fragment() {
             }
         }
 
+        // Show/hide empty state
+        if (transactionsWithDetails.isEmpty()) {
+            binding.rvRecentTransactions.visibility = View.GONE
+            binding.emptyStateDashboard.visibility = View.VISIBLE
+        } else {
+            binding.rvRecentTransactions.visibility = View.VISIBLE
+            binding.emptyStateDashboard.visibility = View.GONE
+        }
+
         transactionAdapter.submitList(transactionsWithDetails)
     }
 

@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 
 @Database(
     entities = [Account::class, Category::class, Transaction::class, AppSettings::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -57,6 +57,25 @@ abstract class AppDatabase : RoomDatabase() {
                     CoroutineScope(Dispatchers.IO).launch {
                         populateDatabase(database.categoryDao())
                         initializeSettings(database.settingsDao())
+                    }
+                }
+            }
+
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+                // Check if categories exist, if not, populate them
+                INSTANCE?.let { database ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val categoryCount = database.categoryDao().getCategoryCount(CategoryType.EXPENSE)
+                        if (categoryCount == 0) {
+                            populateDatabase(database.categoryDao())
+                        }
+
+                        // Ensure settings exist
+                        val settings = database.settingsDao().getSettingsSync()
+                        if (settings == null) {
+                            initializeSettings(database.settingsDao())
+                        }
                     }
                 }
             }

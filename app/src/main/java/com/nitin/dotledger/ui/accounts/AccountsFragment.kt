@@ -55,6 +55,15 @@ class AccountsFragment : Fragment() {
         viewModel.allAccounts.observe(viewLifecycleOwner) { accounts ->
             accountAdapter.submitList(accounts)
 
+            // Show/hide empty state
+            if (accounts.isEmpty()) {
+                binding.rvAccounts.visibility = View.GONE
+                binding.emptyStateAccounts.visibility = View.VISIBLE
+            } else {
+                binding.rvAccounts.visibility = View.VISIBLE
+                binding.emptyStateAccounts.visibility = View.GONE
+            }
+
             // Calculate total balance
             val totalBalance = accounts.sumOf { it.balance }
             binding.tvTotalAccountsBalance.text = currencyFormat.format(totalBalance)

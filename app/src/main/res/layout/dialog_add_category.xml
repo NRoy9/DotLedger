@@ -2,124 +2,185 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/dark_background"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tv_dialog_title"
-        android:layout_width="wrap_content"
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="ADD CATEGORY"
-        android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
-        android:textColor="@color/white"
-        android:layout_marginBottom="24dp" />
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/btn_close"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_close"
+            android:contentDescription="Close"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="ADD CATEGORY"
+            android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/btn_save"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_check"
+            android:contentDescription="Save"
+            app:tint="@color/expense_red" />
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:background="@color/white"
-        android:layout_marginBottom="24dp" />
+        android:background="@color/white" />
 
-    <!-- Category Name -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_category_name"
-        style="@style/Widget.DotLedger.TextInputLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Category Name"
-        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_category_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/dot_matrix"
-            android:inputType="textCapWords"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="vertical"
+            android:padding="20dp">
 
-    <!-- Category Type -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TYPE"
-        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
-        android:layout_marginBottom="8dp" />
+            <!-- Category Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CATEGORY NAME"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="8dp" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_category_type"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:singleSelection="true"
-        app:selectionRequired="true">
+            <EditText
+                android:id="@+id/et_category_name"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_input_field"
+                android:hint="e.g., Travel"
+                android:textColorHint="@color/dark_text_secondary"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:fontFamily="@font/dot_matrix"
+                android:paddingHorizontal="16dp"
+                android:inputType="textCapWords"
+                android:maxLines="1" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_expense_category"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="EXPENSE"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
-            app:chipBackgroundColor="@color/chip_background"
-            app:chipStrokeColor="@color/black"
-            app:chipStrokeWidth="2dp" />
+            <!-- Category Type -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TYPE"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="12dp" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_income_category"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="INCOME"
-            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
-            app:chipBackgroundColor="@color/chip_background"
-            app:chipStrokeColor="@color/black"
-            app:chipStrokeWidth="2dp" />
-    </com.google.android.material.chip.ChipGroup>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
 
-    <!-- Color Selection -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="COLOR"
-        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
-        android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:id="@+id/btn_type_expense"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_type_selected"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_colors"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="↓"
+                        android:textColor="@color/expense_red"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-    <!-- Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="EXPENSE"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cancel"
-            style="@style/Widget.DotLedger.Button.Outlined"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:text="CANCEL" />
+                <LinearLayout
+                    android:id="@+id/btn_type_income"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_input_field"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_save"
-            style="@style/Widget.DotLedger.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:text="SAVE" />
-    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="↑"
+                        android:textColor="@color/income_green"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="INCOME"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/dot_matrix" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Color Selection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COLOR"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                android:textColor="@color/dark_text_secondary"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="12dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_colors"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Delete Button (only shown when editing and not default category) -->
     <com.google.android.material.button.MaterialButton
@@ -127,7 +188,7 @@
         style="@style/Widget.DotLedger.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="20dp"
         android:backgroundTint="@color/red_accent"
         android:text="DELETE CATEGORY"
         android:visibility="gone" />
