@@ -10,18 +10,20 @@ import com.nitin.dotledger.data.dao.AccountDao
 import com.nitin.dotledger.data.dao.CategoryDao
 import com.nitin.dotledger.data.dao.SettingsDao
 import com.nitin.dotledger.data.dao.TransactionDao
+import com.nitin.dotledger.data.dao.BudgetDao
 import com.nitin.dotledger.data.entities.Account
 import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Category
 import com.nitin.dotledger.data.entities.CategoryType
 import com.nitin.dotledger.data.entities.Transaction
+import com.nitin.dotledger.data.entities.Budget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [Account::class, Category::class, Transaction::class, AppSettings::class],
-    version = 3,
+    entities = [Account::class, Category::class, Transaction::class, AppSettings::class, Budget::class],
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -30,6 +32,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun transactionDao(): TransactionDao
     abstract fun settingsDao(): SettingsDao
+    abstract fun budgetDao(): BudgetDao
 
     companion object {
         @Volatile

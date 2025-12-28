@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nitin.dotledger.R
+import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Transaction
 import com.nitin.dotledger.data.entities.TransactionType
 import com.nitin.dotledger.databinding.FragmentTransactionsBinding
@@ -16,6 +17,7 @@ import com.nitin.dotledger.ui.adapters.TransactionAdapter
 import com.nitin.dotledger.ui.adapters.TransactionWithDetails
 import com.nitin.dotledger.ui.dialogs.AddTransactionDialog
 import com.nitin.dotledger.ui.viewmodel.MainViewModel
+import com.nitin.dotledger.utils.CurrencyFormatter
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -24,6 +26,8 @@ import java.util.*
 class TransactionsFragment : Fragment() {
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
+
+    private var currentSettings: AppSettings? = null
 
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var transactionAdapter: TransactionAdapter
@@ -46,12 +50,13 @@ class TransactionsFragment : Fragment() {
 
         setupRecyclerView()
         setupClickListeners()
+        observeSettings()
         updateMonthDisplay()
         loadTransactions()
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter { transaction ->
+        transactionAdapter = TransactionAdapter(currentSettings) { transaction ->  // CHANGED THIS LINE
             AddTransactionDialog.newInstance(transaction.id)
                 .show(childFragmentManager, "EditTransactionDialog")
         }
@@ -59,6 +64,13 @@ class TransactionsFragment : Fragment() {
         binding.rvTransactions.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = transactionAdapter
+        }
+    }
+
+    private fun observeSettings() {
+        viewModel.appSettings.observe(viewLifecycleOwner) { settings ->
+            currentSettings = settings
+            transactionAdapter.updateSettings(settings)
         }
     }
 
@@ -164,9 +176,9 @@ class TransactionsFragment : Fragment() {
             .filter { it.type == TransactionType.EXPENSE }
             .sumOf { it.amount }
 
-        binding.tvMonthlyIncome.text = currencyFormat.format(income)
-        binding.tvMonthlyExpense.text = currencyFormat.format(expense)
-        binding.tvMonthlyNet.text = currencyFormat.format(income - expense)
+        binding.tvMonthlyIncome.text = CurrencyFormatter.format(income, currentSettings)
+        binding.tvMonthlyExpense.text = CurrencyFormatter.format(expense, currentSettings)
+        binding.tvMonthlyNet.text = CurrencyFormatter.format(income - expense, currentSettings)
     }
 
     override fun onDestroyView() {

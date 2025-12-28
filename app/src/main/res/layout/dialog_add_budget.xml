@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_background"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADD BUDGET"
+        android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+        android:textColor="@color/white"
+        android:layout_marginBottom="24dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Category Selection -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_category"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Category"
+        app:boxCornerRadiusBottomEnd="0dp"
+        app:boxCornerRadiusBottomStart="0dp"
+        app:boxCornerRadiusTopEnd="0dp"
+        app:boxCornerRadiusTopStart="0dp"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidth="2dp"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+        <AutoCompleteTextView
+            android:id="@+id/et_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="none"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Budget Amount -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_budget_amount"
+        style="@style/Widget.DotLedger.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Budget Amount"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
+        app:prefixText="₹">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_budget_amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="numberDecimal"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Period -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PERIOD"
+        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_period"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_monthly"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="MONTHLY"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+            app:chipBackgroundColor="@color/chip_background"
+            app:chipStrokeColor="@color/black"
+            app:chipStrokeWidth="2dp" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_yearly"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="YEARLY"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+            app:chipBackgroundColor="@color/chip_background"
+            app:chipStrokeColor="@color/black"
+            app:chipStrokeWidth="2dp" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <!-- Alert Percentage -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_alert_percentage"
+        style="@style/Widget.DotLedger.TextInputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Alert at % (e.g., 80)"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
+        app:suffixText="%">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_alert_percentage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="number"
+            android:text="80"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.DotLedger.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="CANCEL" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/Widget.DotLedger.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="SAVE" />
+    </LinearLayout>
+
+    <!-- Delete Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_delete"
+        style="@style/Widget.DotLedger.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/red_accent"
+        android:text="DELETE BUDGET"
+        android:visibility="gone" />
+
+</LinearLayout>

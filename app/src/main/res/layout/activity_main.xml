@@ -28,6 +28,8 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="16dp"
             android:background="@drawable/red_dot" />
+
+
     </com.google.android.material.appbar.MaterialToolbar>
 
     <!-- Horizontal divider -->

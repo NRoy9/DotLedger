@@ -3,65 +3,91 @@ package com.nitin.dotledger.utils
 import com.nitin.dotledger.data.entities.TransactionType
 import java.util.regex.Pattern
 
+data class ParsedTransaction(
+    val amount: Double,
+    val type: TransactionType,
+    val accountName: String?,
+    val merchantName: String?,
+    val date: Long = System.currentTimeMillis()
+)
+
 object SmsParser {
 
-    // Common bank sender IDs
-    private val BANK_SENDERS = setOf(
-        "HDFCBK", "ICICIB", "SBIIN", "AXISBK", "KOTAKB", "PNBSMS",
-        "SCBANK", "BOIIND", "CITIBANK", "INDBNK", "YESBNK", "IDFCFB", "FEDBNK"
+    // Common bank identifiers
+    private val bankIdentifiers = listOf(
+        "HDFC", "ICICI", "SBI", "AXIS", "KOTAK", "YES BANK",
+        "PNB", "BOI", "CANARA", "UNION BANK", "IDBI", "BOB",
+        "INDUSIND", "PAYTM", "PHONEPE", "GOOGLEPAY", "AMAZONPAY"
     )
 
-    // Keywords for transaction types
-    private val DEBIT_KEYWORDS = setOf(
-        "debited", "debit", "withdrawn", "spent", "paid", "purchase", "payment"
+    // Transaction type keywords
+    private val debitKeywords = listOf(
+        "debited", "debit", "spent", "paid", "purchase",
+        "withdrawn", "withdrawal", "payment", "used"
     )
 
-    private val CREDIT_KEYWORDS = setOf(
-        "credited", "credit", "received", "deposited", "refund", "cashback"
+    private val creditKeywords = listOf(
+        "credited", "credit", "received", "deposited",
+        "deposit", "refund", "cashback", "salary"
     )
 
     /**
-     * Check if SMS is from a bank
+     * Checks if the SMS is from a bank
      */
-    fun isBankSms(sender: String): Boolean {
-        return BANK_SENDERS.any { sender.contains(it, ignoreCase = true) }
+    fun isBankSms(sender: String, message: String): Boolean {
+        val upperSender = sender.uppercase()
+        val upperMessage = message.uppercase()
+
+        // Check if sender or message contains bank identifiers
+        return bankIdentifiers.any {
+            upperSender.contains(it) || upperMessage.contains(it)
+        }
     }
 
     /**
-     * Parse transaction from SMS
+     * Parses SMS to extract transaction details
      */
-    fun parseTransaction(sender: String, message: String): ParsedTransaction? {
-        if (!isBankSms(sender)) return null
+    fun parseTransaction(message: String): ParsedTransaction? {
+        try {
+            val amount = extractAmount(message) ?: return null
+            val type = determineTransactionType(message) ?: return null
+            val accountName = extractAccountName(message)
+            val merchantName = extractMerchantName(message)
 
-        val amount = extractAmount(message) ?: return null
-        val type = determineTransactionType(message) ?: return null
-        val merchantOrNote = extractMerchantOrNote(message)
-        val balance = extractBalance(message)
-
-        return ParsedTransaction(
-            amount = amount,
-            type = type,
-            note = merchantOrNote,
-            currentBalance = balance
-        )
+            return ParsedTransaction(
+                amount = amount,
+                type = type,
+                accountName = accountName,
+                merchantName = merchantName
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     /**
-     * Extract amount from SMS
+     * Extracts amount from SMS
+     * Looks for patterns like: Rs.1000, Rs 1000, INR 1000, 1000.00, etc.
      */
     private fun extractAmount(message: String): Double? {
-        // Pattern to match amounts like Rs.1000, INR 1000, 1,000.00
         val patterns = listOf(
-            Pattern.compile("(?:Rs\\.?|INR)\\s*([0-9,]+\\.?[0-9]*)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?:debited|credited|paid|received|withdrawn|deposited)\\s+(?:Rs\\.?|INR)?\\s*([0-9,]+\\.?[0-9]*)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("(?:amount|amt)\\s+(?:Rs\\.?|INR)?\\s*([0-9,]+\\.?[0-9]*)", Pattern.CASE_INSENSITIVE)
+            // Rs.1,234.56 or Rs 1,234.56
+            Pattern.compile("(?:rs\\.?|inr)\\s*([0-9,]+\\.?[0-9]*)", Pattern.CASE_INSENSITIVE),
+            // 1,234.56 (standalone numbers with commas/decimals)
+            Pattern.compile("\\b([0-9]{1,3}(?:,[0-9]{3})*(?:\\.[0-9]{2})?)\\b"),
+            // 1234.56 (without commas)
+            Pattern.compile("\\b([0-9]+\\.[0-9]{2})\\b")
         )
 
         for (pattern in patterns) {
             val matcher = pattern.matcher(message)
             if (matcher.find()) {
                 val amountStr = matcher.group(1)?.replace(",", "") ?: continue
-                return amountStr.toDoubleOrNull()
+                val amount = amountStr.toDoubleOrNull()
+                if (amount != null && amount > 0) {
+                    return amount
+                }
             }
         }
 
@@ -69,86 +95,77 @@ object SmsParser {
     }
 
     /**
-     * Determine transaction type (debit/credit)
+     * Determines if transaction is debit or credit
      */
     private fun determineTransactionType(message: String): TransactionType? {
         val lowerMessage = message.lowercase()
 
+        val hasDebitKeyword = debitKeywords.any { lowerMessage.contains(it) }
+        val hasCreditKeyword = creditKeywords.any { lowerMessage.contains(it) }
+
         return when {
-            DEBIT_KEYWORDS.any { lowerMessage.contains(it) } -> TransactionType.EXPENSE
-            CREDIT_KEYWORDS.any { lowerMessage.contains(it) } -> TransactionType.INCOME
-            else -> null
+            hasDebitKeyword && !hasCreditKeyword -> TransactionType.EXPENSE
+            hasCreditKeyword && !hasDebitKeyword -> TransactionType.INCOME
+            else -> {
+                // If both or neither, try to determine from context
+                if (lowerMessage.contains("credited") || lowerMessage.contains("received")) {
+                    TransactionType.INCOME
+                } else if (lowerMessage.contains("debited") || lowerMessage.contains("paid")) {
+                    TransactionType.EXPENSE
+                } else {
+                    null
+                }
+            }
         }
     }
 
     /**
-     * Extract merchant name or note
+     * Extracts account name from SMS
+     * Looks for patterns like: A/C XX1234, Card XX1234, etc.
      */
-    private fun extractMerchantOrNote(message: String): String {
-        // Try to extract merchant name
+    private fun extractAccountName(message: String): String? {
         val patterns = listOf(
-            Pattern.compile("at\\s+([A-Za-z0-9\\s]+?)(?:\\s+on|\\.|\\,)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("to\\s+([A-Za-z0-9\\s]+?)(?:\\s+on|\\.|\\,)", Pattern.CASE_INSENSITIVE),
-            Pattern.compile("from\\s+([A-Za-z0-9\\s]+?)(?:\\s+on|\\.|\\,)", Pattern.CASE_INSENSITIVE)
+            Pattern.compile("(?:a/c|account|card)\\s*(?:no\\.?|number)?\\s*[xX*]*([0-9]{4})", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?:ending|ending with)\\s*([0-9]{4})", Pattern.CASE_INSENSITIVE)
         )
 
         for (pattern in patterns) {
             val matcher = pattern.matcher(message)
             if (matcher.find()) {
-                return matcher.group(1)?.trim() ?: ""
+                val accountNumber = matcher.group(1)
+                return "Account ending $accountNumber"
             }
         }
 
-        // If no merchant found, return first 50 chars of message as note
-        return message.take(50)
-    }
-
-    /**
-     * Extract current balance from SMS
-     */
-    private fun extractBalance(message: String): Double? {
-        // Pattern to match balance like "Avl Bal: Rs.5000", "Balance: INR 5000.00"
-        val pattern = Pattern.compile(
-            "(?:balance|bal|avl\\s*bal)[:\\s]+(?:Rs\\.?|INR)?\\s*([0-9,]+\\.?[0-9]*)",
-            Pattern.CASE_INSENSITIVE
-        )
-
-        val matcher = pattern.matcher(message)
-        if (matcher.find()) {
-            val balanceStr = matcher.group(1)?.replace(",", "") ?: return null
-            return balanceStr.toDoubleOrNull()
+        // Try to extract bank name
+        for (bank in bankIdentifiers) {
+            if (message.uppercase().contains(bank)) {
+                return bank
+            }
         }
 
         return null
     }
 
     /**
-     * Extract account number (last 4 digits usually shown)
+     * Extracts merchant/payee name from SMS
      */
-    fun extractAccountNumber(message: String): String? {
-        val pattern = Pattern.compile("(?:A/c|Account|Card)\\s*(?:no\\.?)?\\s*[xX*]{2,}([0-9]{4})", Pattern.CASE_INSENSITIVE)
-        val matcher = pattern.matcher(message)
+    private fun extractMerchantName(message: String): String? {
+        val patterns = listOf(
+            Pattern.compile("(?:at|to|from)\\s+([A-Za-z0-9\\s&-]+?)(?:on|\\.|for|Rs)", Pattern.CASE_INSENSITIVE),
+            Pattern.compile("(?:merchant|payee)\\s*:?\\s*([A-Za-z0-9\\s&-]+?)(?:\\.|for|on)", Pattern.CASE_INSENSITIVE)
+        )
 
-        return if (matcher.find()) {
-            "****${matcher.group(1)}"
-        } else {
-            null
+        for (pattern in patterns) {
+            val matcher = pattern.matcher(message)
+            if (matcher.find()) {
+                val merchant = matcher.group(1)?.trim()
+                if (merchant != null && merchant.length > 2 && merchant.length < 50) {
+                    return merchant
+                }
+            }
         }
-    }
 
-    /**
-     * Get transaction date from SMS timestamp (if available)
-     */
-    fun extractTransactionDate(message: String): Long? {
-        // Most SMS show transaction date, but we'll use SMS received time as fallback
-        // This can be enhanced to parse date strings from SMS
-        return null // Will use System.currentTimeMillis() as default
+        return null
     }
 }
-
-data class ParsedTransaction(
-    val amount: Double,
-    val type: TransactionType,
-    val note: String,
-    val currentBalance: Double? = null
-)

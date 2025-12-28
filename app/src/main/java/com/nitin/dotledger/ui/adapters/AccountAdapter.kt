@@ -9,13 +9,19 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nitin.dotledger.data.entities.Account
 import com.nitin.dotledger.data.entities.AccountType
+import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.databinding.ItemAccountBinding
-import java.text.NumberFormat
-import java.util.*
+import com.nitin.dotledger.utils.CurrencyFormatter
 
 class AccountAdapter(
+    private var settings: AppSettings? = null,
     private val onItemClick: (Account) -> Unit
 ) : ListAdapter<Account, AccountAdapter.AccountViewHolder>(AccountDiffCallback()) {
+
+    fun updateSettings(newSettings: AppSettings?) {
+        settings = newSettings
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountViewHolder {
         val binding = ItemAccountBinding.inflate(
@@ -23,21 +29,21 @@ class AccountAdapter(
             parent,
             false
         )
-        return AccountViewHolder(binding, onItemClick)
+        return AccountViewHolder(binding, settings, onItemClick)
     }
 
     override fun onBindViewHolder(holder: AccountViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), settings)
     }
 
     class AccountViewHolder(
         private val binding: ItemAccountBinding,
+        private var settings: AppSettings?,
         private val onItemClick: (Account) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
-
-        fun bind(account: Account) {
+        fun bind(account: Account, currentSettings: AppSettings?) {
+            settings = currentSettings
             binding.apply {
                 tvAccountName.text = account.name
                 tvAccountType.text = when (account.type) {
@@ -47,7 +53,9 @@ class AccountAdapter(
                     AccountType.CASH -> "Cash"
                     AccountType.OTHER -> "Other"
                 }
-                tvAccountBalance.text = currencyFormat.format(account.balance)
+
+                // Use CurrencyFormatter for balance
+                tvAccountBalance.text = CurrencyFormatter.format(account.balance, settings)
 
                 // Set account emoji based on type
                 tvAccountIcon.text = when (account.type) {

@@ -7,19 +7,25 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.nitin.dotledger.R
 import com.nitin.dotledger.data.entities.Account
+import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Category
 import com.nitin.dotledger.data.entities.Transaction
 import com.nitin.dotledger.data.entities.TransactionType
 import com.nitin.dotledger.databinding.ItemTransactionBinding
-import java.text.NumberFormat
+import com.nitin.dotledger.utils.CurrencyFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionAdapter(
+    private var settings: AppSettings?,
     private val onItemClick: (Transaction) -> Unit
 ) : ListAdapter<TransactionWithDetails, TransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
+
+    fun updateSettings(newSettings: AppSettings?) {
+        settings = newSettings
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
         val binding = ItemTransactionBinding.inflate(
@@ -27,22 +33,23 @@ class TransactionAdapter(
             parent,
             false
         )
-        return TransactionViewHolder(binding, onItemClick)
+        return TransactionViewHolder(binding, settings, onItemClick)
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), settings)
     }
 
     class TransactionViewHolder(
         private val binding: ItemTransactionBinding,
+        private var settings: AppSettings?,
         private val onItemClick: (Transaction) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
 
-        fun bind(item: TransactionWithDetails) {
+        fun bind(item: TransactionWithDetails, currentSettings: AppSettings?) {
+            settings = currentSettings
             binding.apply {
                 // Set category name or transfer label
                 tvCategory.text = when (item.transaction.type) {
@@ -70,11 +77,11 @@ class TransactionAdapter(
                 }
                 tvDate.text = dateText
 
-                // Set amount with color
+                // Set amount with color using settings
                 val amountText = when (item.transaction.type) {
-                    TransactionType.INCOME -> "+${currencyFormat.format(item.transaction.amount)}"
-                    TransactionType.EXPENSE -> "-${currencyFormat.format(item.transaction.amount)}"
-                    TransactionType.TRANSFER -> currencyFormat.format(item.transaction.amount)
+                    TransactionType.INCOME -> "+${CurrencyFormatter.format(item.transaction.amount, settings)}"
+                    TransactionType.EXPENSE -> "-${CurrencyFormatter.format(item.transaction.amount, settings)}"
+                    TransactionType.TRANSFER -> CurrencyFormatter.format(item.transaction.amount, settings)
                 }
                 tvAmount.text = amountText
 
@@ -85,7 +92,7 @@ class TransactionAdapter(
                 }
                 tvAmount.setTextColor(amountColor)
 
-                // Set indicator circle color with gradient-like solid color
+                // Set indicator circle color
                 val indicatorColor = when (item.transaction.type) {
                     TransactionType.INCOME -> Color.parseColor("#34C759")
                     TransactionType.EXPENSE -> Color.parseColor("#FF3B30")
@@ -97,7 +104,7 @@ class TransactionAdapter(
                 drawable.setColor(indicatorColor)
                 viewTypeIndicator.background = drawable
 
-                // Set category icon emoji (you can customize this based on category)
+                // Set category icon emoji
                 tvCategoryIcon.text = getCategoryEmoji(item.category?.name ?: "")
 
                 // Click listener

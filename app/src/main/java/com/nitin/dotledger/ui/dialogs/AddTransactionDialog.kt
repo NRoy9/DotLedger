@@ -59,6 +59,15 @@ class AddTransactionDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NORMAL, R.style.FullScreenDialog)
+
+        // Load default transaction type from settings if not explicitly provided
+        lifecycleScope.launch {
+            val settings = viewModel.getSettingsSync()
+            val typeString = arguments?.getString(ARG_TYPE)
+            if (typeString == null && settings != null) {
+                currentType = settings.defaultTransactionType
+            }
+        }
     }
 
     override fun onCreateView(

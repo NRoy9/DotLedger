@@ -7,12 +7,16 @@ import com.nitin.dotledger.data.dao.CategoryTotal
 import com.nitin.dotledger.data.dao.SettingsDao
 import com.nitin.dotledger.data.dao.TransactionDao
 import com.nitin.dotledger.data.entities.*
+import com.nitin.dotledger.data.entities.Budget
+import com.nitin.dotledger.data.entities.BudgetWithSpending
+import com.nitin.dotledger.data.dao.BudgetDao
 
 class DotLedgerRepository(
     private val accountDao: AccountDao,
     private val categoryDao: CategoryDao,
     private val transactionDao: TransactionDao,
-    private val settingsDao: SettingsDao
+    private val settingsDao: SettingsDao,
+    private val budgetDao: BudgetDao
 ) {
     // Settings operations
     val appSettings: LiveData<AppSettings?> = settingsDao.getSettings()
@@ -192,4 +196,71 @@ class DotLedgerRepository(
 
     suspend fun getCategoryTotals(type: TransactionType, startDate: Long, endDate: Long): List<CategoryTotal> =
         transactionDao.getCategoryTotals(type, startDate, endDate)
+
+    suspend fun updateSettings(settings: AppSettings) = settingsDao.saveSettings(settings)
+
+    // Budget operations
+    val allActiveBudgets: LiveData<List<Budget>> = budgetDao.getAllActiveBudgets()
+
+    suspend fun insertBudget(budget: Budget): Long = budgetDao.insert(budget)
+
+    suspend fun updateBudget(budget: Budget) = budgetDao.update(budget)
+
+    suspend fun deleteBudget(budget: Budget) = budgetDao.delete(budget)
+
+    suspend fun getBudgetById(budgetId: Long): Budget? = budgetDao.getBudgetById(budgetId)
+
+    fun getCurrentBudgets(currentDate: Long): LiveData<List<Budget>> =
+        budgetDao.getCurrentBudgets(currentDate)
+
+    suspend fun getActiveBudgetForCategory(categoryId: Long, currentDate: Long): Budget? =
+        budgetDao.getActiveBudgetForCategory(categoryId, currentDate)
+
+    suspend fun getOverallBudget(currentDate: Long): Budget? =
+        budgetDao.getOverallBudget(currentDate)
+
+    suspend fun deactivateBudget(budgetId: Long) = budgetDao.deactivateBudget(budgetId)
+
+    // Get budget with spending information
+    suspend fun getBudgetWithSpending(budget: Budget): BudgetWithSpending {
+        val category = budget.categoryId?.let { categoryDao.getCategoryById(it) }
+
+        // Calculate spent amount for the budget period
+        val spent = if (budget.categoryId != null) {
+            // Category-specific budget
+            transactionDao.getTransactionsByTypeAndDateRange(
+                TransactionType.EXPENSE,
+                budget.startDate,
+                budget.endDate
+            ).value?.filter { it.categoryId == budget.categoryId }?.sumOf { it.amount } ?: 0.0
+        } else {
+            // Overall budget
+            transactionDao.getTotalByTypeAndDateRange(
+                TransactionType.EXPENSE,
+                budget.startDate,
+                budget.endDate
+            ) ?: 0.0
+        }
+
+        val remaining = budget.amount - spent
+        val percentageUsed = if (budget.amount > 0) {
+            ((spent / budget.amount) * 100).toFloat()
+        } else {
+            0f
+        }
+
+        return BudgetWithSpending(
+            budget = budget,
+            category = category,
+            spent = spent,
+            remaining = remaining,
+            percentageUsed = percentageUsed
+        )
+    }
+
+    suspend fun getAllBudgetsWithSpending(currentDate: Long): List<BudgetWithSpending> {
+        val budgets = budgetDao.getCurrentBudgets(currentDate).value ?: emptyList()
+        return budgets.map { getBudgetWithSpending(it) }
+    }
+
 }

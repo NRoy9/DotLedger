@@ -41,4 +41,10 @@
         android:label="Manage Categories"
         tools:layout="@layout/fragment_categories" />
 
+    <fragment
+        android:id="@+id/budgetsFragment"
+        android:name="com.nitin.dotledger.ui.budgets.BudgetsFragment"
+        android:label="Budgets"
+        tools:layout="@layout/fragment_budgets" />
+
 </navigation>

@@ -9,6 +9,8 @@ import com.nitin.dotledger.data.dao.CategoryTotal
 import com.nitin.dotledger.data.entities.*
 import com.nitin.dotledger.data.repository.DotLedgerRepository
 import kotlinx.coroutines.launch
+import com.nitin.dotledger.data.entities.Budget
+import com.nitin.dotledger.data.entities.BudgetWithSpending
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DotLedgerRepository
@@ -25,19 +27,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             database.accountDao(),
             database.categoryDao(),
             database.transactionDao(),
-            database.settingsDao()
+            database.settingsDao(),
+            database.budgetDao()  // ADD THIS LINE
         )
 
         allAccounts = repository.allAccounts
         allCategories = repository.allCategories
         allTransactions = repository.allTransactions
         totalBalance = repository.totalBalance
-        appSettings = repository.appSettings
+        appSettings = database.settingsDao().getSettings()
     }
 
     // Settings operations
     fun updateSettings(settings: AppSettings) = viewModelScope.launch {
-        repository.saveSettings(settings)
+        repository.updateSettings(settings)
     }
 
     suspend fun getSettingsSync(): AppSettings? {
@@ -138,4 +141,40 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         return accountBalance + incomeTotal - expenseTotal
     }
+
+    // Budget operations
+    val allActiveBudgets: LiveData<List<Budget>> = repository.allActiveBudgets
+
+    fun insertBudget(budget: Budget) = viewModelScope.launch {
+        repository.insertBudget(budget)
+    }
+
+    fun updateBudget(budget: Budget) = viewModelScope.launch {
+        repository.updateBudget(budget)
+    }
+
+    fun deleteBudget(budget: Budget) = viewModelScope.launch {
+        repository.deleteBudget(budget)
+    }
+
+    suspend fun getBudgetById(budgetId: Long): Budget? {
+        return repository.getBudgetById(budgetId)
+    }
+
+    fun getCurrentBudgets(currentDate: Long): LiveData<List<Budget>> {
+        return repository.getCurrentBudgets(currentDate)
+    }
+
+    suspend fun getBudgetWithSpending(budget: Budget): BudgetWithSpending {
+        return repository.getBudgetWithSpending(budget)
+    }
+
+    suspend fun getAllBudgetsWithSpending(currentDate: Long): List<BudgetWithSpending> {
+        return repository.getAllBudgetsWithSpending(currentDate)
+    }
+
+    suspend fun deactivateBudget(budgetId: Long) {
+        repository.deactivateBudget(budgetId)
+    }
+
 }

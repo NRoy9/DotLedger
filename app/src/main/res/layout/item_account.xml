@@ -6,7 +6,7 @@
     android:layout_marginBottom="12dp"
     app:cardBackgroundColor="#1C1C1E"
     app:cardElevation="0dp"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="16dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
@@ -14,109 +14,77 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <!-- Account Header Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+        <!-- Account Icon Circle -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp">
 
-            <!-- Account Icon -->
-            <FrameLayout
+            <View
+                android:id="@+id/view_account_indicator"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginEnd="12dp">
+                android:background="@drawable/red_dot" />
 
-                <View
-                    android:id="@+id/view_account_indicator"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/red_dot" />
-
-                <TextView
-                    android:id="@+id/tv_account_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="🏦"
-                    android:textSize="24sp" />
-            </FrameLayout>
-
-            <!-- Account Name and Type -->
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tv_account_icon"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:layout_gravity="center"
+                android:text="🏦"
+                android:textSize="24sp" />
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/tv_account_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HDFC Bank"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/dot_matrix" />
+        <!-- Account Name and Type -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_account_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HDFC Bank"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/dot_matrix" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
 
                 <TextView
                     android:id="@+id/tv_account_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Bank Account"
+                    android:text="Cash"
                     android:textColor="@color/dark_text_secondary"
                     android:textSize="13sp"
                     android:fontFamily="@font/dot_matrix" />
+
+
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Balance Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Amount -->
+        <TextView
+            android:id="@+id/tv_account_balance"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:paddingTop="16dp"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_divider_top">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Balance"
-                    android:textColor="@color/dark_text_secondary"
-                    android:textSize="11sp"
-                    android:fontFamily="@font/dot_matrix" />
-
-                <TextView
-                    android:id="@+id/tv_account_balance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="₹10,000"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/dot_matrix" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text=">"
-                android:textColor="@color/dark_text_secondary"
-                android:textSize="24sp" />
-        </LinearLayout>
+            android:text="-₹500"
+            android:textColor="@color/expense_red"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/dot_matrix" />
 
     </LinearLayout>
 

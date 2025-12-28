@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.databinding.FragmentAccountsBinding
 import com.nitin.dotledger.ui.adapters.AccountAdapter
 import com.nitin.dotledger.ui.dialogs.AddAccountDialog
 import com.nitin.dotledger.ui.viewmodel.MainViewModel
-import java.text.NumberFormat
-import java.util.*
+import com.nitin.dotledger.utils.CurrencyFormatter
 
 class AccountsFragment : Fragment() {
     private var _binding: FragmentAccountsBinding? = null
@@ -20,7 +20,7 @@ class AccountsFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var accountAdapter: AccountAdapter
-    private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
+    private var currentSettings: AppSettings? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +40,7 @@ class AccountsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        accountAdapter = AccountAdapter { account ->
+        accountAdapter = AccountAdapter(currentSettings) { account ->
             AddAccountDialog.newInstance(account.id)
                 .show(childFragmentManager, "EditAccountDialog")
         }
@@ -52,22 +52,22 @@ class AccountsFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        // Observe settings
+        viewModel.appSettings.observe(viewLifecycleOwner) { settings ->
+            currentSettings = settings
+            accountAdapter.updateSettings(settings)
+            updateTotalBalance()
+        }
+
         viewModel.allAccounts.observe(viewLifecycleOwner) { accounts ->
             accountAdapter.submitList(accounts)
-
-            // Show/hide empty state
-            if (accounts.isEmpty()) {
-                binding.rvAccounts.visibility = View.GONE
-                binding.emptyStateAccounts.visibility = View.VISIBLE
-            } else {
-                binding.rvAccounts.visibility = View.VISIBLE
-                binding.emptyStateAccounts.visibility = View.GONE
-            }
-
-            // Calculate total balance
-            val totalBalance = accounts.sumOf { it.balance }
-            binding.tvTotalAccountsBalance.text = currencyFormat.format(totalBalance)
+            updateTotalBalance()
         }
+    }
+
+    private fun updateTotalBalance() {
+        val totalBalance = viewModel.allAccounts.value?.sumOf { it.balance } ?: 0.0
+        binding.tvTotalAccountsBalance.text = CurrencyFormatter.format(totalBalance, currentSettings)
     }
 
     private fun setupClickListeners() {

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_background"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TRANSACTION DETECTED"
+            android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📱"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/white"
+        android:layout_marginBottom="20dp" />
+
+    <!-- SMS Message Preview -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FROM SMS"
+        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+        android:textColor="@color/dark_text_secondary"
+        android:layout_marginBottom="8dp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="#1C1C1E"
+        app:cardElevation="0dp"
+        app:cardCornerRadius="12dp">
+
+        <TextView
+            android:id="@+id/tv_sms_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Sample SMS message"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="13sp"
+            android:fontFamily="@font/dot_matrix"
+            android:maxLines="3"
+            android:ellipsize="end" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Transaction Details -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TRANSACTION DETAILS"
+        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+        android:textColor="@color/dark_text_secondary"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Type -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Type:"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+
+        <TextView
+            android:id="@+id/tv_transaction_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Expense"
+            android:textColor="@color/expense_red"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/dot_matrix" />
+    </LinearLayout>
+
+    <!-- Amount -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Amount:"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+
+        <TextView
+            android:id="@+id/tv_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="₹500.00"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/dot_matrix" />
+    </LinearLayout>
+
+    <!-- Account -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Account:"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+
+        <TextView
+            android:id="@+id/tv_account_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="HDFC Bank"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+    </LinearLayout>
+
+    <!-- Merchant -->
+    <LinearLayout
+        android:id="@+id/layout_merchant"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Merchant:"
+            android:textColor="@color/dark_text_secondary"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+
+        <TextView
+            android:id="@+id/tv_merchant_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Amazon"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:fontFamily="@font/dot_matrix" />
+    </LinearLayout>
+
+    <!-- Category Selection -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_category"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:hint="Category"
+        app:boxCornerRadiusBottomEnd="0dp"
+        app:boxCornerRadiusBottomStart="0dp"
+        app:boxCornerRadiusTopEnd="0dp"
+        app:boxCornerRadiusTopStart="0dp"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidth="2dp"
+        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+        <AutoCompleteTextView
+            android:id="@+id/et_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/dot_matrix"
+            android:inputType="none"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_dismiss"
+            style="@style/Widget.DotLedger.Button.Outlined"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="DISMISS" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/Widget.DotLedger.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="SAVE TRANSACTION" />
+    </LinearLayout>
+</LinearLayout>

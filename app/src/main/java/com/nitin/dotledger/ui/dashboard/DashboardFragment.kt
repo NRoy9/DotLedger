@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nitin.dotledger.data.entities.Account
+import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Category
 import com.nitin.dotledger.data.entities.Transaction
 import com.nitin.dotledger.data.entities.TransactionType
@@ -17,8 +17,7 @@ import com.nitin.dotledger.ui.adapters.TransactionAdapter
 import com.nitin.dotledger.ui.adapters.TransactionWithDetails
 import com.nitin.dotledger.ui.dialogs.AddTransactionDialog
 import com.nitin.dotledger.ui.viewmodel.MainViewModel
-import kotlinx.coroutines.launch
-import java.text.NumberFormat
+import com.nitin.dotledger.utils.CurrencyFormatter
 import java.util.*
 
 class DashboardFragment : Fragment() {
@@ -27,7 +26,7 @@ class DashboardFragment : Fragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var transactionAdapter: TransactionAdapter
-    private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
+    private var currentSettings: AppSettings? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +58,7 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter { transaction ->
+        transactionAdapter = TransactionAdapter(currentSettings) { transaction ->
             AddTransactionDialog.newInstance(transaction.id)
                 .show(childFragmentManager, "EditTransactionDialog")
         }
@@ -71,19 +70,26 @@ class DashboardFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        // Observe settings first
+        viewModel.appSettings.observe(viewLifecycleOwner) { settings ->
+            currentSettings = settings
+            transactionAdapter.updateSettings(settings)
+            updateAllAmounts()
+        }
+
         // Observe total balance
         viewModel.totalBalance.observe(viewLifecycleOwner) { balance ->
-            binding.tvTotalBalance.text = currencyFormat.format(balance ?: 0.0)
+            binding.tvTotalBalance.text = CurrencyFormatter.format(balance ?: 0.0, currentSettings)
         }
 
         // Observe total income
         viewModel.getTotalByType(TransactionType.INCOME).observe(viewLifecycleOwner) { income ->
-            binding.tvTotalIncome.text = currencyFormat.format(income ?: 0.0)
+            binding.tvTotalIncome.text = CurrencyFormatter.format(income ?: 0.0, currentSettings)
         }
 
         // Observe total expense
         viewModel.getTotalByType(TransactionType.EXPENSE).observe(viewLifecycleOwner) { expense ->
-            binding.tvTotalExpense.text = currencyFormat.format(expense ?: 0.0)
+            binding.tvTotalExpense.text = CurrencyFormatter.format(expense ?: 0.0, currentSettings)
         }
 
         // Observe both accounts and transactions before processing
@@ -97,6 +103,21 @@ class DashboardFragment : Fragment() {
 
         viewModel.allCategories.observe(viewLifecycleOwner) { categories ->
             updateRecentTransactions(viewModel.allAccounts.value, viewModel.allTransactions.value, categories)
+        }
+    }
+
+    private fun updateAllAmounts() {
+        // Re-fetch and update all amounts with new settings
+        viewModel.totalBalance.value?.let {
+            binding.tvTotalBalance.text = CurrencyFormatter.format(it, currentSettings)
+        }
+
+        viewModel.getTotalByType(TransactionType.INCOME).value?.let {
+            binding.tvTotalIncome.text = CurrencyFormatter.format(it, currentSettings)
+        }
+
+        viewModel.getTotalByType(TransactionType.EXPENSE).value?.let {
+            binding.tvTotalExpense.text = CurrencyFormatter.format(it, currentSettings)
         }
     }
 
@@ -118,25 +139,18 @@ class DashboardFragment : Fragment() {
             }
         }
 
-        // Show/hide empty state
-        if (transactionsWithDetails.isEmpty()) {
-            binding.rvRecentTransactions.visibility = View.GONE
-            binding.emptyStateDashboard.visibility = View.VISIBLE
-        } else {
-            binding.rvRecentTransactions.visibility = View.VISIBLE
-            binding.emptyStateDashboard.visibility = View.GONE
-        }
-
         transactionAdapter.submitList(transactionsWithDetails)
     }
 
     private fun setupClickListeners() {
         binding.btnAddIncome.setOnClickListener {
+            val defaultType = currentSettings?.defaultTransactionType ?: TransactionType.EXPENSE
             AddTransactionDialog.newInstance(type = TransactionType.INCOME)
                 .show(childFragmentManager, "AddIncomeDialog")
         }
 
         binding.btnAddExpense.setOnClickListener {
+            val defaultType = currentSettings?.defaultTransactionType ?: TransactionType.EXPENSE
             AddTransactionDialog.newInstance(type = TransactionType.EXPENSE)
                 .show(childFragmentManager, "AddExpenseDialog")
         }
