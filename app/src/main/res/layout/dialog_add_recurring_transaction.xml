@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ADD RECURRING TRANSACTION"
+            android:textAppearance="@style/TextAppearance.DotLedger.Headline2"
+            android:textColor="@color/white"
+            android:layout_marginBottom="24dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/white"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_name"
+            style="@style/Widget.DotLedger.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Name (e.g., Monthly Rent)"
+            app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dot_matrix"
+                android:inputType="textCapWords"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Transaction Type -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TYPE"
+            android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_expense"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="EXPENSE"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_income"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INCOME"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_transfer"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TRANSFER"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Amount -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_amount"
+            style="@style/Widget.DotLedger.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Amount"
+            app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
+            app:prefixText="₹">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dot_matrix"
+                android:inputType="numberDecimal"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Account -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_account"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Account"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="2dp"
+            app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dot_matrix"
+                android:inputType="none"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Category -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_category"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Category"
+            app:boxCornerRadiusBottomEnd="0dp"
+            app:boxCornerRadiusBottomStart="0dp"
+            app:boxCornerRadiusTopEnd="0dp"
+            app:boxCornerRadiusTopStart="0dp"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="2dp"
+            app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dot_matrix"
+                android:inputType="none"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Frequency -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FREQUENCY"
+            android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_daily"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Daily"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_weekly"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weekly"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_biweekly"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Biweekly"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_monthly"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Monthly"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_quarterly"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quarterly"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_yearly"
+                style="@style/Widget.Material3.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yearly"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                app:chipBackgroundColor="@color/chip_background"
+                app:chipStrokeColor="@color/black"
+                app:chipStrokeWidth="2dp" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Start Date -->
+        <LinearLayout
+            android:id="@+id/btn_start_date"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_input_field"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Start Date"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption" />
+
+            <TextView
+                android:id="@+id/tv_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Date"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </LinearLayout>
+
+        <!-- End Date (Optional) -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_has_end_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Set End Date"
+            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/btn_end_date"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_input_field"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="End Date"
+                android:textAppearance="@style/TextAppearance.DotLedger.Caption" />
+
+            <TextView
+                android:id="@+id/tv_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Date"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1" />
+        </LinearLayout>
+
+        <!-- Note -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_note"
+            style="@style/Widget.DotLedger.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="Note (Optional)"
+            app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/dot_matrix"
+                android:inputType="textCapSentences"
+                android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                android:maxLines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.DotLedger.Button.Outlined"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="CANCEL" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                style="@style/Widget.DotLedger.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="SAVE" />
+        </LinearLayout>
+
+        <!-- Delete Button (only when editing) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            style="@style/Widget.DotLedger.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/red_accent"
+            android:text="DELETE RECURRING"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

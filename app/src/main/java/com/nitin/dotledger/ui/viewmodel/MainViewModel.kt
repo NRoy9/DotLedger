@@ -3,6 +3,7 @@ package com.nitin.dotledger.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.nitin.dotledger.data.AppDatabase
 import com.nitin.dotledger.data.dao.CategoryTotal
@@ -11,6 +12,7 @@ import com.nitin.dotledger.data.repository.DotLedgerRepository
 import kotlinx.coroutines.launch
 import com.nitin.dotledger.data.entities.Budget
 import com.nitin.dotledger.data.entities.BudgetWithSpending
+import com.nitin.dotledger.data.models.TransactionFilter
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: DotLedgerRepository
@@ -21,6 +23,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val totalBalance: LiveData<Double?>
     val appSettings: LiveData<AppSettings?>
 
+    private val _currentFilter = MutableLiveData<TransactionFilter>()
+    val currentFilter: LiveData<com.nitin.dotledger.data.models.TransactionFilter> = _currentFilter
+
+    private val _filteredTransactions = MutableLiveData<List<Transaction>>()
+    val filteredTransactions: LiveData<List<Transaction>> = _filteredTransactions
+
     init {
         val database = AppDatabase.getDatabase(application)
         repository = DotLedgerRepository(
@@ -28,7 +36,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             database.categoryDao(),
             database.transactionDao(),
             database.settingsDao(),
-            database.budgetDao()  // ADD THIS LINE
+            database.budgetDao(),
+            database.recurringTransactionDao()
         )
 
         allAccounts = repository.allAccounts
@@ -36,6 +45,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         allTransactions = repository.allTransactions
         totalBalance = repository.totalBalance
         appSettings = database.settingsDao().getSettings()
+
+        // Add these properties
+        val allRecurring: LiveData<List<RecurringTransaction>> = repository.getAllRecurring()
+        val activeRecurring: LiveData<List<RecurringTransaction>> = repository.getActiveRecurring()
+
     }
 
     // Settings operations
@@ -175,6 +189,71 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun deactivateBudget(budgetId: Long) {
         repository.deactivateBudget(budgetId)
+    }
+
+    fun applyFilter(filter: com.nitin.dotledger.data.models.TransactionFilter) {
+        _currentFilter.value = filter
+
+        repository.searchAndFilterTransactions(filter).observeForever { transactions ->
+            _filteredTransactions.value = transactions
+        }
+    }
+
+    fun clearFilter() {
+        _currentFilter.value = com.nitin.dotledger.data.models.TransactionFilter()
+        _filteredTransactions.value = allTransactions.value
+    }
+
+    fun searchTransactions(query: String) {
+        if (query.isEmpty()) {
+            _filteredTransactions.value = allTransactions.value
+        } else {
+            repository.searchTransactions(query).observeForever { transactions ->
+                _filteredTransactions.value = transactions
+            }
+        }
+    }
+
+    fun hasActiveFilter(): Boolean {
+        return _currentFilter.value?.hasActiveFilters() ?: false
+    }
+
+    fun getFilterSummary(): String {
+        val filter = _currentFilter.value ?: return "No filters"
+        return com.nitin.dotledger.utils.FilterSummaryHelper.generateSummary(
+            filter,
+            allAccounts.value,
+            allCategories.value
+        )
+    }
+
+    fun getFilterBadge(): String {
+        val filter = _currentFilter.value ?: return "All"
+        return com.nitin.dotledger.utils.FilterSummaryHelper.getFilterBadge(filter)
+    }
+
+    fun insertRecurringTransaction(recurringTransaction: RecurringTransaction) = viewModelScope.launch {
+        repository.insertRecurringTransaction(recurringTransaction)
+    }
+
+    fun updateRecurringTransaction(recurringTransaction: RecurringTransaction) = viewModelScope.launch {
+        repository.updateRecurringTransaction(recurringTransaction)
+    }
+
+    fun deleteRecurringTransaction(recurringTransaction: RecurringTransaction) = viewModelScope.launch {
+        repository.deleteRecurringTransaction(recurringTransaction)
+    }
+
+    fun getRecurringTransactionById(id: Long): LiveData<RecurringTransaction?> {
+        return repository.getRecurringTransactionByIdLive(id)
+    }
+
+    suspend fun getRecurringTransactionByIdSync(id: Long): RecurringTransaction? {
+        return repository.getRecurringTransactionById(id)
+    }
+
+    fun toggleRecurringStatus(id: Long, isActive: Boolean) = viewModelScope.launch {
+        repository.updateRecurringActiveStatus(id, isActive)
     }
 
 }

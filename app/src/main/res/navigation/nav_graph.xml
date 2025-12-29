@@ -47,4 +47,10 @@
         android:label="Budgets"
         tools:layout="@layout/fragment_budgets" />
 
+    <fragment
+        android:id="@+id/recurringTransactionsFragment"
+        android:name="com.nitin.dotledger.ui.recurring.RecurringTransactionsFragment"
+        android:label="Recurring Transactions"
+        tools:layout="@layout/fragment_recurring_transactions" />
+
 </navigation>

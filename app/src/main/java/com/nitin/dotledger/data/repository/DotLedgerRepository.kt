@@ -6,6 +6,7 @@ import com.nitin.dotledger.data.dao.CategoryDao
 import com.nitin.dotledger.data.dao.CategoryTotal
 import com.nitin.dotledger.data.dao.SettingsDao
 import com.nitin.dotledger.data.dao.TransactionDao
+import com.nitin.dotledger.data.dao.RecurringTransactionDao
 import com.nitin.dotledger.data.entities.*
 import com.nitin.dotledger.data.entities.Budget
 import com.nitin.dotledger.data.entities.BudgetWithSpending
@@ -16,7 +17,8 @@ class DotLedgerRepository(
     private val categoryDao: CategoryDao,
     private val transactionDao: TransactionDao,
     private val settingsDao: SettingsDao,
-    private val budgetDao: BudgetDao
+    private val budgetDao: BudgetDao,
+    private val recurringTransactionDao: RecurringTransactionDao
 ) {
     // Settings operations
     val appSettings: LiveData<AppSettings?> = settingsDao.getSettings()
@@ -263,4 +265,77 @@ class DotLedgerRepository(
         return budgets.map { getBudgetWithSpending(it) }
     }
 
+    // Search and filter
+    // Enhanced search and filter
+    fun searchAndFilterTransactions(filter: com.nitin.dotledger.data.models.TransactionFilter): LiveData<List<Transaction>> {
+        val types = filter.types.map { it.name }
+        val hasTypes = if (filter.types.isEmpty()) 0 else 1
+
+        val accountIds = filter.accountIds.toList()
+        val hasAccounts = if (filter.accountIds.isEmpty()) 0 else 1
+
+        val categoryIds = filter.categoryIds.toList()
+        val hasCategories = if (filter.categoryIds.isEmpty()) 0 else 1
+        val includeNull = 0 // Set to 1 if you want to include uncategorized transactions
+
+        val dateRange = filter.dateRange ?: com.nitin.dotledger.data.models.DateRange(0L, Long.MAX_VALUE)
+        val amountRange = filter.amountRange ?: com.nitin.dotledger.data.models.AmountRange()
+
+        return transactionDao.searchAndFilterTransactions(
+            searchQuery = filter.searchQuery,
+            types = types,
+            hasTypes = hasTypes,
+            accountIds = accountIds,
+            hasAccounts = hasAccounts,
+            categoryIds = categoryIds,
+            hasCategories = hasCategories,
+            includeNull = includeNull,
+            startDate = dateRange.startDate,
+            endDate = dateRange.endDate,
+            minAmount = amountRange.minAmount,
+            maxAmount = amountRange.maxAmount,
+            sortBy = filter.sortBy.name
+        )
+    }
+
+    fun searchTransactions(query: String, limit: Int = 50): LiveData<List<Transaction>> {
+        return transactionDao.searchTransactionsByNote(query, limit)
+    }
+
+    // Recurring Transaction operations
+    suspend fun insertRecurringTransaction(recurringTransaction: RecurringTransaction): Long {
+        return recurringTransactionDao.insert(recurringTransaction)
+    }
+
+    suspend fun updateRecurringTransaction(recurringTransaction: RecurringTransaction) {
+        recurringTransactionDao.update(recurringTransaction)
+    }
+
+    suspend fun deleteRecurringTransaction(recurringTransaction: RecurringTransaction) {
+        recurringTransactionDao.delete(recurringTransaction)
+    }
+
+    suspend fun getRecurringTransactionById(id: Long): RecurringTransaction? {
+        return recurringTransactionDao.getById(id)
+    }
+
+    fun getRecurringTransactionByIdLive(id: Long): LiveData<RecurringTransaction?> {
+        return recurringTransactionDao.getByIdLive(id)
+    }
+
+    fun getAllRecurring(): LiveData<List<RecurringTransaction>> {
+        return recurringTransactionDao.getAllRecurring()
+    }
+
+    fun getActiveRecurring(): LiveData<List<RecurringTransaction>> {
+        return recurringTransactionDao.getActiveRecurring()
+    }
+
+    suspend fun getDueRecurring(currentDate: Long): List<RecurringTransaction> {
+        return recurringTransactionDao.getDueRecurring(currentDate)
+    }
+
+    suspend fun updateRecurringActiveStatus(id: Long, isActive: Boolean) {
+        recurringTransactionDao.updateActiveStatus(id, isActive)
+    }
 }

@@ -44,6 +44,26 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
+        <!-- SMS Broadcast Receiver -->
+        <receiver
+            android:name=".receivers.SmsBroadcastReceiver"
+            android:permission="android.permission.BROADCAST_SMS"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- SMS Action Receiver -->
+        <receiver
+            android:name=".receivers.SmsActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.nitin.dotledger.SMS_APPROVE" />
+                <action android:name="com.nitin.dotledger.SMS_DISMISS" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

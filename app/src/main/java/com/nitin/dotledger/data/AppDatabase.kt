@@ -11,6 +11,7 @@ import com.nitin.dotledger.data.dao.CategoryDao
 import com.nitin.dotledger.data.dao.SettingsDao
 import com.nitin.dotledger.data.dao.TransactionDao
 import com.nitin.dotledger.data.dao.BudgetDao
+import com.nitin.dotledger.data.dao.RecurringTransactionDao
 import com.nitin.dotledger.data.entities.Account
 import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Category
@@ -22,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [Account::class, Category::class, Transaction::class, AppSettings::class, Budget::class],
+    entities = [Account::class, Category::class, Transaction::class, AppSettings::class, Budget::class, RecurringTransaction::class],
     version = 4,
     exportSchema = false
 )
@@ -33,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun settingsDao(): SettingsDao
     abstract fun budgetDao(): BudgetDao
+    abstract fun recurringTransactionDao(): RecurringTransactionDao
 
     companion object {
         @Volatile

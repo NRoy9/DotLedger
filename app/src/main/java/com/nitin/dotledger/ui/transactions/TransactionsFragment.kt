@@ -1,24 +1,23 @@
 package com.nitin.dotledger.ui.transactions
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nitin.dotledger.R
-import com.nitin.dotledger.data.entities.AppSettings
 import com.nitin.dotledger.data.entities.Transaction
 import com.nitin.dotledger.data.entities.TransactionType
 import com.nitin.dotledger.databinding.FragmentTransactionsBinding
 import com.nitin.dotledger.ui.adapters.TransactionAdapter
 import com.nitin.dotledger.ui.adapters.TransactionWithDetails
 import com.nitin.dotledger.ui.dialogs.AddTransactionDialog
+import com.nitin.dotledger.ui.dialogs.FilterTransactionsDialog
 import com.nitin.dotledger.ui.viewmodel.MainViewModel
-import com.nitin.dotledger.utils.CurrencyFormatter
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,14 +26,12 @@ class TransactionsFragment : Fragment() {
     private var _binding: FragmentTransactionsBinding? = null
     private val binding get() = _binding!!
 
-    private var currentSettings: AppSettings? = null
-
     private val viewModel: MainViewModel by activityViewModels()
     private lateinit var transactionAdapter: TransactionAdapter
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("en", "IN"))
 
     private var currentCalendar = Calendar.getInstance()
-    private var currentFilter: TransactionType? = null
+    private var isSearching = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,14 +46,15 @@ class TransactionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupSearchBar()
         setupClickListeners()
-        observeSettings()
+        setupObservers()
         updateMonthDisplay()
         loadTransactions()
     }
 
     private fun setupRecyclerView() {
-        transactionAdapter = TransactionAdapter(currentSettings) { transaction ->  // CHANGED THIS LINE
+        transactionAdapter = TransactionAdapter { transaction ->
             AddTransactionDialog.newInstance(transaction.id)
                 .show(childFragmentManager, "EditTransactionDialog")
         }
@@ -67,11 +65,26 @@ class TransactionsFragment : Fragment() {
         }
     }
 
-    private fun observeSettings() {
-        viewModel.appSettings.observe(viewLifecycleOwner) { settings ->
-            currentSettings = settings
-            transactionAdapter.updateSettings(settings)
-        }
+    private fun setupSearchBar() {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString()
+                isSearching = query.isNotEmpty()
+
+                if (query.isEmpty()) {
+                    // If filter is active, keep using filtered results
+                    if (viewModel.hasActiveFilter()) {
+                        // Filter will handle it
+                    } else {
+                        loadTransactions()
+                    }
+                } else {
+                    viewModel.searchTransactions(query)
+                }
+            }
+        })
     }
 
     private fun setupClickListeners() {
@@ -88,18 +101,56 @@ class TransactionsFragment : Fragment() {
         }
 
         binding.chipGroupFilter.setOnCheckedStateChangeListener { _, checkedIds ->
-            currentFilter = when (checkedIds.firstOrNull()) {
+            val selectedType = when (checkedIds.firstOrNull()) {
                 R.id.chip_income -> TransactionType.INCOME
                 R.id.chip_expense -> TransactionType.EXPENSE
                 R.id.chip_transfer -> TransactionType.TRANSFER
                 else -> null
             }
-            loadTransactions()
+
+            // Quick filter by type only
+            val currentFilter = viewModel.currentFilter.value ?: com.nitin.dotledger.data.models.TransactionFilter()
+            val types = if (selectedType != null) setOf(selectedType) else emptySet()
+            val updatedFilter = currentFilter.copy(types = types)
+            viewModel.applyFilter(updatedFilter)
+        }
+
+        binding.btnFilter.setOnClickListener {
+            FilterTransactionsDialog().show(childFragmentManager, "FilterDialog")
+        }
+
+        binding.btnClearFilter.setOnClickListener {
+            viewModel.clearFilter()
+            binding.chipGroupFilter.clearCheck()
+            updateFilterSummary()
         }
 
         binding.fabAddTransaction.setOnClickListener {
             AddTransactionDialog.newInstance()
                 .show(childFragmentManager, "AddTransactionDialog")
+        }
+    }
+
+    private fun setupObservers() {
+        // Observe filter state
+        viewModel.currentFilter.observe(viewLifecycleOwner) { _ ->
+            updateFilterSummary()
+        }
+
+        // Observe filtered transactions
+        viewModel.filteredTransactions.observe(viewLifecycleOwner) { transactions ->
+            if (transactions != null && (viewModel.hasActiveFilter() || isSearching)) {
+                updateTransactionsList(transactions)
+            }
+        }
+
+        // Observe all accounts and categories for filter summary
+        viewModel.allAccounts.observe(viewLifecycleOwner) {
+            updateFilterSummary()
+        }
+
+        viewModel.allCategories.observe(viewLifecycleOwner) {
+            updateFilterSummary()
         }
     }
 
@@ -109,6 +160,11 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun loadTransactions() {
+        if (viewModel.hasActiveFilter()) {
+            // Let filter handle it
+            return
+        }
+
         val calendar = currentCalendar.clone() as Calendar
 
         // Start of month
@@ -137,24 +193,8 @@ class TransactionsFragment : Fragment() {
         val accounts = viewModel.allAccounts.value ?: emptyList()
         val categories = viewModel.allCategories.value ?: emptyList()
 
-        // Filter by type if selected
-        val filteredTransactions = if (currentFilter != null) {
-            transactions.filter { it.type == currentFilter }
-        } else {
-            transactions
-        }
-
-        // Show/hide empty state
-        if (filteredTransactions.isEmpty()) {
-            binding.rvTransactions.visibility = View.GONE
-            binding.emptyStateTransactions.visibility = View.VISIBLE
-        } else {
-            binding.rvTransactions.visibility = View.VISIBLE
-            binding.emptyStateTransactions.visibility = View.GONE
-        }
-
         // Map to TransactionWithDetails
-        val transactionsWithDetails = filteredTransactions.mapNotNull { transaction ->
+        val transactionsWithDetails = transactions.mapNotNull { transaction ->
             val account = accounts.find { it.id == transaction.accountId }
             val category = transaction.categoryId?.let { categoryId ->
                 categories.find { it.id == categoryId }
@@ -176,9 +216,19 @@ class TransactionsFragment : Fragment() {
             .filter { it.type == TransactionType.EXPENSE }
             .sumOf { it.amount }
 
-        binding.tvMonthlyIncome.text = CurrencyFormatter.format(income, currentSettings)
-        binding.tvMonthlyExpense.text = CurrencyFormatter.format(expense, currentSettings)
-        binding.tvMonthlyNet.text = CurrencyFormatter.format(income - expense, currentSettings)
+        binding.tvMonthlyIncome.text = currencyFormat.format(income)
+        binding.tvMonthlyExpense.text = currencyFormat.format(expense)
+        binding.tvMonthlyNet.text = currencyFormat.format(income - expense)
+    }
+
+    private fun updateFilterSummary() {
+        if (viewModel.hasActiveFilter()) {
+            val summary = viewModel.getFilterSummary()
+            binding.tvActiveFilters.text = summary
+            binding.layoutActiveFilters.visibility = View.VISIBLE
+        } else {
+            binding.layoutActiveFilters.visibility = View.GONE
+        }
     }
 
     override fun onDestroyView() {

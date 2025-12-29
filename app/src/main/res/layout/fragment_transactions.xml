@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:paddingBottom="100dp">
 
-            <!-- Header with Title -->
+            <!-- Header with Search and Filter -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +31,85 @@
                     android:textColor="@color/white"
                     android:textSize="28sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/dot_matrix" />
+                    android:fontFamily="@font/dot_matrix"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Search Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_search"
+                        style="@style/Widget.DotLedger.TextInputLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:hint="Search transactions..."
+                        app:hintTextAppearance="@style/TextAppearance.DotLedger.Caption"
+                        app:startIconDrawable="@android:drawable/ic_menu_search"
+                        app:endIconMode="clear_text">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_search"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/dot_matrix"
+                            android:inputType="text"
+                            android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                            android:maxLines="1" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_filter"
+                        style="@style/Widget.DotLedger.Button.Outlined"
+                        android:layout_width="wrap_content"
+                        android:layout_height="56dp"
+                        android:text="FILTER"
+                        android:textSize="12sp"
+                        app:icon="@drawable/ic_filter"
+                        app:iconSize="20dp" />
+                </LinearLayout>
+
+                <!-- Active Filter Indicator -->
+                <LinearLayout
+                    android:id="@+id/layout_active_filters"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/red_dot"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_active_filters"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Active filters applied"
+                        android:textAppearance="@style/TextAppearance.DotLedger.Caption"
+                        android:textColor="@color/red_accent" />
+
+                    <TextView
+                        android:id="@+id/btn_clear_filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Clear"
+                        android:textAppearance="@style/TextAppearance.DotLedger.Body1"
+                        android:textColor="@color/red_accent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp" />
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Month Selector Card -->
